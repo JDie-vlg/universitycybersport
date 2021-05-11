@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %}
+
+{% endblock head %}
+
+{% block content %}
+{{ error }}
+    <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+{#        {{ form.title }}<br>#}
+{#        {{ form.text }}<br>#}
+{#        {{ form.image_list }}<br>#}
+{#        {{ form.image_news }}<br>#}
+{#        {{ form.categories }}}<br>#}
+{#        {{ form.draft }}<br>#}
+        {{ form.as_p }}
+        {{ form.errors }}
+        <button type="submit">Добавить новость</button>
+    </form>
+
+{% endblock content %}

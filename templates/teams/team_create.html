@@ -1,0 +1,8 @@
+
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.name }}<br>
+    {{ form.tag }}<br>
+    {{ form.logo }}<br>
+    <button type="submit">Создать</button>
+</form>

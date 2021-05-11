@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %}
+{#    <link href="{% static 'css/zebra_datepicker.min.css' %}" rel="stylesheet" type="text/css">#}
+{#    <script src="{% static 'js/zebra_datepicker.min.js' %}"></script>#}
+{#    <script src="{% static 'js/jquery-3.5.0.min.js' %}"></script>#}
+    <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/zebra_datepicker@latest/dist/zebra_datepicker.min.js"></script>
+
+
+    <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/zebra_datepicker@latest/dist/css/default/zebra_datepicker.min.css">
+
+
+{% endblock head %}
+
+{% block content %}
+
+<form action="" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+    {{ form.as_p }}<br>
+<button type="submit">Добавить турнир</button><br>
+</form>
+
+
+<script>
+$(document).ready(function() {
+    $('.datepicker_start').Zebra_DatePicker({
+    format: 'd.m.Y H:i'
+    });
+});
+const datepicker_start = $('selector').data('Zebra_DatePicker');
+</script>
+    <script>
+    $(document).ready(function() {
+    $('.datepicker_start_registration').Zebra_DatePicker({
+    format: 'd.m.Y H:i'
+    });
+});
+    const datepicker_start_registration = $('selector').data('Zebra_DatePicker');
+    </script>
+      <script>
+    $(document).ready(function() {
+    $('.datepicker_end_registration').Zebra_DatePicker({
+    format: 'd.m.Y H:i'
+    });
+});
+    const datepicker_end_registration = $('selector').data('Zebra_DatePicker');
+    </script>
+{% endblock content %}

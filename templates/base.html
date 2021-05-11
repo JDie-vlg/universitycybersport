@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="">
+        <title>СКЕЛЕТ</title>
+        <meta name="description" content="Скелет сайта.">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+        <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet">
+        <link href="//fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700" rel="stylesheet">
+        <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+	    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script type="text/javascript" src="{% static 'js/slider.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        {% block head %}  {% endblock head %}
+        <link rel="canonical" href="http://www.thepetedesign.com/demos/immersive_slider_demo.html" />
+    </head>
+    <body>
+
+        <div class="block-background">
+            <div class="banner">
+                <a class="link-banner" href="#" style="background-image: url({% static 'image/BANNER-SITE.png' %});">
+                    <img src="{% static 'image/BANNER-SITE.png'%}" alt="img">
+                </a>
+            </div>
+        </div>
+
+        <div class="wrapper-container" style="margin-top: 200px;">
+            <div class="block-header">
+                <div class="block-logos">
+                    <a href="{% url 'main' %}" class="logo-uneversitycybersport">
+                        <img src="{% static 'image/universitycybersport-logo.png' %}" class="logo-us" alt="img">
+                    </a>
+                    <div class="block-partner">
+                        <img src="{% static 'image/simple-students-life.png' %}" alt="img">
+                    </div>
+                </div>
+                <div class="block-top-nav">
+                    <div class="block-wrap-search">
+                        <form action="{% url 'search' %}" class="block-search" method="get">
+                            <input class="search-text" name="string" placeholder="Поиск...">
+                            <button class="fa fa-search" type="submit"><span></span></button>
+                        </form>
+                    </div>
+                    <div class="block-auth">
+                        {% if not request.user.is_authenticated %}
+                        <a class="glyphicon glyphicon-user" href="{% url 'login' %}?next={{ request.path }}"></a>
+                        <a class="glyphicon glyphicon-edit" href="{% url 'registration' %}?next={{ request.path }}"></a>
+                        {% endif %}
+                        {% if request.user.is_authenticated %}
+                        <a class="glyphicon glyphicon-user" href="{% url 'user_detail' request.user.profile.nickname %}"></a>
+                        <a class="glyphicon glyphicon-log-in" href="{% url 'logout' %}?next={{ request.path }}"></a>
+                        {% endif %}
+                        <div class="block-exit-user">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="block-main-navigation">
+                    <div class="block-header-navigation">
+                        <ul class="block-header-navigation">
+                            <li class="item item-news">
+                                <div class="item-header">
+                                    <a href="{% url 'news' %}">Новости</a>
+                                </div>
+                            </li>
+                            <li class="item item-tournaments">
+                                <div class="item-header">
+                                    <a href="{% url 'tournaments' %}">турниры</a>
+                                </div>
+                            </li>
+                            <li class="item item-teams">
+                                <div class="item-header">
+                                    <a href="{% url 'teams' %}">Команды</a>
+                                </div>
+                            </li>
+                            <li class="item item-about">
+                                <div class="item-header">
+                                    <a>О нас</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-home">
+                {% block content %}
+
+                {% endblock content %}
+            </div>
+
+            <footer class="block-footer">
+                <div class="block-footer-top">
+                    <div class="block-footer-media">
+                         <div class="block-media-top">ПОДДЕРЖИВАЙТЕ НАС</div>
+                         <ul class="block-media">
+                            <li>
+                                <a class="item-media" href="#"><img src="{% static 'image/vk.png' %}" alt="img"></a>
+                            </li>
+                            <li>
+                                <a class="item-media" href="#"><img src="{% static 'image/yt.png' %}" alt="img"></a>
+                            </li>
+                            <li>
+                                <a class="item-media" href="#"><img src="{% static 'image/stm.png' %}" alt="img"></a>
+                            </li>
+                         </ul>
+                    </div>
+                </div>
+                <div class="block-footer-bottom">
+                    <div class="block-copyright">
+                        University Cybersport 2021 ©<br>
+                        <a>Политика конфедициальности</a>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

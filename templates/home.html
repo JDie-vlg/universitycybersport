@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/home-style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/slider.css' %}">
+    <script type="text/javascript" src="{% static 'js/slider.js' %}"></script>
+{% endblock head %}
+{% block content %}
+
+    <div class="block-first clearfix">
+                      <div class="slider">
+    <div class="slider__wrapper">
+      <div class="slider__items">
+          {% for news in last_five_news %}
+        <div class="slider__item">
+            <a class="news-slider-link" href="{{ news.get_absolute_url }}">
+                <div class="imageContainer">
+                    <span class="testText"><h2 class="h2-text">{{ news.title }}</h2></span>
+                </div>
+                <div class="slider-image">
+                    <img class="img-fluid" id='slider-image' src="{{ news.image_news.url }}" alt="c1">
+                </div>
+            </a>
+          </div>
+          {% endfor %}
+      </div>
+    </div>
+    <a class="slider__control slider__control_prev" href="#" role="button"></a>
+    <a class="slider__control slider__control_next" href="#" role="button"></a>
+  </div>
+                </div>
+                <div class="block-second clearfix">
+                    <div class="block-news">
+                        <div class="header-news">
+                            <h2>
+                                <a href="{% url 'news' %}">Новости</a>
+                            </h2>
+                        </div>
+                    </div>
+                    <ul class="list-news list">
+                        {% for news in news %}
+                        <li class="item-main-news">
+                            <a href="{{ news.get_absolute_url }}">
+                                <div class="item-news-bg" style="text-align: -webkit-center;"><img class="image-news" id='image-news' src="{{ news.image_news.url }}" style="width: 100%;" alt="img"></div>
+                                <span class="item-news-content">
+
+{#                                    {% if  %}#}
+{#                                    <span class="icon-game"><img src="{% static 'image/steam.png' %}" style="width: 20px; height: 20px;"><span class="name-game">Название игры</span></span>#}
+{#                                    {% endif %}#}
+
+                                    <span class="author-news">{{ news.author.profile.nickname }}</span>
+                                    <span class=""></span>
+                                    <span class="title-news">{{ news.title }}</span>
+                                    <span class="description-news" style="color: black;">{{ news.text }}</span>
+                                    <span class="data-news">{{ news.publish_date }} {{ news.publish_time }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+    <script type="text/javascript" src="{% static 'js/slider.js' %}"></script>
+        <script>
+            $(document).ready(function(){
+                $('.img-fluid').hover(function() {
+                    $(this).addClass('transition');
+                }, function() {
+                    $(this).removeClass('transition');
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function(){
+                $('.image-news').hover(function() {
+                    $(this).addClass('transition');
+                }, function() {
+                    $(this).removeClass('transition');
+                });
+            });
+        </script>
+{% endblock content %}

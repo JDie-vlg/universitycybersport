@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %} <link rel="stylesheet" href="{% static 'css/tournaments.css' %}"> {% endblock head %}
+
+{% block content %}
+
+    <div class="block-first clearfix">
+                    <div class="block-tournaments">
+                        <div class="header-tournaments">
+                            {% if user.is_authenticated and user.is_staff %}
+                                <form action="{% url 'tournament_add' %}">
+                                <button>Добавить турнир</button>
+                                </form>
+                            {% endif %}
+                            <h2>
+                                <a>Турниры</a>
+                            </h2>
+                        </div>
+                    </div>
+                    <ul class="list-tournaments list">
+                        {% for tournament in tournaments_list %}
+                        <li class="item-main-tournaments">
+                            <a href="{{ tournament.get_absolute_url }}">
+                                <div class="item-tournaments-bg" style="text-align: -webkit-center;"><img class="image-tournaments" id='image-tournaments' src="{{ tournament.image.url }}" style="width: 100%;"></div>
+                                <span class="item-tournaments-content">
+                                    <span class="icon-game"><img src="{{ tournament.game.icon.url }}" style="width: 20px; height: 20px;"><span class="name-game">{{ tournament.game.name }}</span></span>
+                                    <span class="author-tournaments">{{ tournament.author.profile.nickname }}</span>
+                                    <span class=""></span>
+                                    <span class="title-tournaments">{{ tournament.name }}</span>
+                                    <span class="description-tournaments">{{ tournament.description }}</span>
+                                    <span class="data-tournaments">Дата начала: {{ tournament.start_date }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+<script>
+            $(document).ready(function(){
+                $('.image-tournaments').hover(function() {
+                    $(this).addClass('transition');
+                }, function() {
+                    $(this).removeClass('transition');
+                });
+            });
+        </script>
+{% endblock content %}

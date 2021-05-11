@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %} <link rel="stylesheet" href="{% static 'css/tournaments-detail.css' %}"> {% endblock head %}
+
+{% block content %}
+
+    <div class="container-tournaments-detail">
+                <div class="header-detail-tournament">
+                    <h2 class="title-tournament">{{ tournaments.name }}</h2>
+                    <span class="data-tournament">{{ tournaments.start_date }}</span>
+                </div>
+                <div class="container-image-tournament">
+                    <img class="image-tournament" src="{{ tournaments.image.url }}">
+                </div>
+                <div class="content-tournament">
+                    {{ tournaments.description }}
+                </div>
+    </div>
+
+{% endblock content %}

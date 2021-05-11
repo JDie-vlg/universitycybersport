@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/news.css' %}">
+{% endblock head %}
+
+{% block content %}
+
+    <div class="block-second clearfix">
+                    <div class="block-news">
+                        <div class="header-news">
+                            {% if user.is_authenticated and user.is_staff %}
+                            <a class="add-news" href="{% url 'news_add' %}">Добавить новость</a>
+                            {% endif %}
+                            <h2>
+                                <a class="news-header">Новости</a>
+                            </h2>
+                        </div>
+                    </div>
+                    <ul class="list-news list">
+                        {% for news in news_list %}
+                        <li class="item-main-news">
+                            <a href="{{ news.get_absolute_url }}">
+                                <div class="item-news-bg" style="text-align: -webkit-center;"><img class="image-news" id='image-news' src="{{ news.image_news.url }}" style="width: 100%;"></div>
+                                <span class="item-news-content">
+
+{#                                    {% if %}#}
+{#                                    <span class="icon-game"><img src="{% static 'image/steam.png' %}" style="width: 20px; height: 20px;"><span class="name-game">Название игры</span></span>#}
+{#                                    {% endif %}#}
+
+                                    <span class="author-news">{{ news.author.profile.nickname }}</span>
+                                    <span class=""></span>
+                                    <span class="title-news">{{ news.title }}</span>
+                                    <span class="description-news" style="display: block; height: 110px; overflow: hidden;">{{ news.text }}</span>
+                                    <span class="data-news">{{ news.publish_date }} {{ news.publish_time }}</span>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+    <script>
+            $(document).ready(function(){
+                $('.image-news').hover(function() {
+                    $(this).addClass('transition');
+                }, function() {
+                    $(this).removeClass('transition');
+                });
+            });
+        </script>
+{% endblock content %}

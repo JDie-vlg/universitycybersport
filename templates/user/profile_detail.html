@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %}  {% endblock head %}
+
+{% block content %}
+
+{{ profile.nickname }}
+{{ profile.age }}
+{{ profile.user.email }}
+{{ profile.user.username }}
+
+{% endblock content %}

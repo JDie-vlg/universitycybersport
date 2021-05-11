@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %}  {% endblock head %}
+
+{% block content %}
+
+{% for user in user_list %}
+    <a href="{{ user.profile.nickname }}">
+        <img src="{{ user.profile.avatar.url }}" style="width: 5%; border-radius: 50%;"><br>
+        {{ user.profile.nickname }}<br>
+        {% if not user.profile.team == None %}
+           {{ user.profile.team.name }}<br>
+        {% endif %}
+    </a>
+{% endfor %}
+
+{% endblock content %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/news-detail.css' %}">
+{% endblock head %}
+
+{% block content %}
+
+    <div class="container-news-detail">
+                <div class="header-detail-news">
+                    <h2 class="title-news">{{ news.title }}</h2>
+                    <span class="data-news">{{ news.publish_date }} {{ news.publish_time }}</span>
+                </div>
+                <div class="container-image-news">
+                    <img class="image-news" src="{% static 'image/preview.png' %}">
+                </div>
+                <div class="content-news">
+                    {{ news.text }}
+                </div>
+                <div class="comments-news">
+                    <div class="comments-header">
+                        <span  class="comments-title">Комментарии</span>
+                        {% if not user.is_authenticated %}
+                            <span class="comments-warning">Чтобы оставить комментарий, <a href="{% url 'login' %}?next={{ request.path }}">войдите</a> или <a href="{% url 'registration' %}?next={{ request.path }}">зарегестрируйтесь</a></span>
+                        {% endif %}
+                    </div>
+                {% if user.is_authenticated %}
+                    <div class="contact-single">
+                        <h3 class="editContent" style="outline: none; cursor: inherit;">
+                                        Оставить комментарий</h3><h6>{{ news.comments_set.count }} комментариев</h6>
+                        <form action="{% url 'add_comments' news.id %}" method="post" class="mt-4" id="formComments">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent" id="contactparent" value="">
+                            <input type="hidden" name="user" id="contactusername" value="" class="commentId">
+                            <div class="form-group editContent">
+                                <label for="contactcomment" class="editContent">
+                                    Ваш комментарий *
+                                </label>
+                                <textarea class="form-control border" rows="5" name="text"
+                                          id="contactcomment" required=""></textarea>
+                            </div>
+                            <button type="submit"
+                                    class="mt-3 btn btn-success btn-block py-3">
+                                Отправить
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+                    <div class="comments">
+                        <ul class="list-comments">
+                            <li class="full-comment">
+                                {% for comments in news.get_comments %}
+                                <div class="comment">
+                                    <img class="user-image" src="{{ comments.user.profile.avatar.url }}">
+                                    <h5 class="user-username"> <a class="user-parent-link" href="{% url 'user_detail' comments.user.profile.nickname %}"> {{ comments.user.profile.nickname }} </a></h5>
+                                    <span class="comment-date">{{ comments.date }} {{ comments.time }}</span>
+                                    <p class="user-comment">{{ comments.text }}</p>
+                                    {% if user.is_authenticated %}
+                                        <a href="#formComments" onclick="addComments('{{ comments.user.profile.nickname }}', '{{ comments.id }}')">Ответить</a>
+                                    {% endif %}
+                                </div>
+                                {% for comment in comments.comments_set.all %}
+                                <div class="comment-answer">
+                                    <img class="user-image" src="{{ comments.user.profile.avatar.url }}">
+                                    <h5 class="user-username"> <a class="user-parent-link" href="{% url 'user_detail' comments.user.profile.nickname %}"> {{ comments.user.profile.nickname }} </a> -> <a class="user-answer-link" href="{% url 'user_detail' comments.user.profile.nickname %}"> {{ comments.user.profile.nickname }} </a></h5>
+                                    <span class="comment-date">{{ comments.date }} {{ comments.time }}</span>
+                                    <p class="user-comment">{{ comments.text }}</p>
+                                    {% if user.is_authenticated %}
+                                        <a href="#formComments" onclick="addComments('{{ comment.user.profile.nickname }}', '{{ comments.id }}')">Ответить</a>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            {% endfor %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+<script>
+    function addComments(name, id){
+        document.getElementById('contactparent').value = id;
+        document.getElementById('contactcomment').innerText = `${name}, `;
+    }
+    </script>
+{% endblock content %}

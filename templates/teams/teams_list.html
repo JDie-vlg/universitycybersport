@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %} <link rel="stylesheet" href="{% static 'css/teams.css' %}"> {% endblock head %}
+
+{% block content %}
+
+    <div class="block-first clearfix">
+                    <div class="header-teams">
+                        <span class="header-teams-text">Команды</span>
+                    {% if user.is_authenticated %}
+                    {% if request.user.profile.team != None %}
+                    <span style="float: right;">Ваша команда: <a href="{% url 'team_detail' request.user.profile.team.name %}">{{ request.user.profile.team.name }}</a></span>
+                    {% else %}
+                    <form action="{% url 'team_create' %}" method="post">
+                        {% csrf_token %}
+                        <button class="header-teams-add">Создать команду</button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
+                    </div>
+                </div>
+
+                <div class="block-second clearfix">
+                {% for team in team_list %}
+                    <a href="{% url 'team_detail' team.slug %}">
+                        <div class="block-teams-container">
+                            <div class="container-team-image">
+                                <img class="team-image" src="{{ team.logo.url }}">
+                            </div>
+                            <span class="team-name">{{ team.name }}</span>
+                            <span class="team-members">Количество игроков: {{ team.profile_set.count }}</span>
+                            {% if team.game != None and team.game.icon != None %}
+                                <span class="team-game">{{ team.game.name }}</span>
+                                <img class="icon-game" src="{{ team.game.icon.url }}" alt="icon game">
+                            {% endif %}
+                        </div>
+                    </a>
+                {% endfor %}
+                </div>
+<script>
+            $(document).ready(function(){
+                $('.item-main-news').hover(function() {
+                    $('.image-news').addClass('transition');
+                }, function() {
+                    $('.image-news').removeClass('transition');
+                });
+            });
+        </script>
+{% endblock content %}

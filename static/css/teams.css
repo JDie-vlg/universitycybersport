@@ -1,0 +1,176 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    vertical-align: baseline;
+}
+
+div {
+    display: block;
+}
+
+.container-home {
+    padding: 0 50px 0 50px;
+}
+
+.block-first{
+    padding: 0 0 45px 0;
+}
+
+.header-teams{
+    padding: 50px 0 35px 0;
+}
+
+.header-teams-text{
+    float: left;
+    text-align: left;
+    color: #3d3d3d;
+    font: 26px/26px Proxima Nova,sans-serif;
+    font-weight: bold;
+    display: inline-block;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.header-teams-add{
+    float: right;
+    color: #fff;
+    border: none;
+    background-color: darkgreen;
+    padding: 5px;
+    font: 13px/13px Proxima Nova,sans-serif;
+    font-weight: bold;
+}
+
+.header-teams-add:hover{
+    background-color: green;
+}
+
+.block-second{
+    padding-bottom: 50px;
+}
+
+.block-second>a{
+    color: black;
+}
+
+.block-second>a:hover .team-name{
+    color: deeppink
+}
+
+.block-teams-container{
+    float: left;
+    background-color: lightslategray;
+    width: 350px;
+    height: 170px;
+    padding: 21px 0 21px 5px;
+    margin-right: 16px;
+    margin-bottom: 10px;
+}
+
+/*
+.container-team-image{
+    width: 128px; 
+    height: 128px; 
+    vertical-align: middle; 
+    background-color: #fff; 
+    border-radius: 50%;
+    overflow: hidden;
+}
+*/
+
+.container-team-image{
+    display: inline-flex;
+    flex-grow: 0;
+    position: relative;
+    width: 128px;
+    height: 128px;
+    overflow: hidden;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.team-image{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 128px;
+    height: 128px;
+    object-fit: scale-down;
+}
+
+.team-name{
+    position: absolute;
+    padding-top: 25px;
+    padding-left: 5px;
+    font: 20px/20px Proxima Nova,sans-serif;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.team-members{
+    position: absolute;
+    padding-top: 55px;
+    padding-left: 5px;
+    font: 14px/15px Proxima Nova,sans-serif;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.team-game{
+    position: absolute;
+    padding-left: 34px;
+    padding-top: 88px;
+    font: 14px/14px Proxima Nova,sans-serif;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.icon-game{
+    position: absolute;
+    margin-left: 5px;
+    margin-top: 85px;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    border-radius: 15%
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

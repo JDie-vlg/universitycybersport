@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %} <link rel="stylesheet" href="{% static 'css/teams-detail.css' %}"> {% endblock head %}
+
+{% block content %}
+    
+    <div class="team-container">
+                    <div class="team-header-content">
+                        <div class="team-header-container-image">
+                            <img class="logo-team" src="{{ team.logo.url }}">
+                        </div>
+                        <div class="team-header-container-content">
+                            <span class="flag-team"><!--flg--></span>
+                            <span class="country-team"><!--country--></span>
+                            <span class="name-team">{{ team.name }}</span>
+                            <span class="rating-team"><!--rating--></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="players-container">
+                    <ul>
+                        {% for users in team.profile_set.all %}
+                        <li class="item">
+                            <a href="{% url 'user_detail' users.user.profile.nickname %}">
+
+                                <span class="container-player-image"><img class="player-image" src="{{ users.user.profile.avatar.url }}"></span>
+
+                                <span class="player-nick">{{ users.user.profile.nickname }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="about-team">
+                        <span class="about-team-header">О команде</span><br>
+                        <span></span>
+                    </div>
+                    {% if user.is_staff %}
+                    <div class="tournaments-history">
+                        <span class="tournaments-history-header">История турниров</span><br>
+                        <span></span>
+                    </div>
+                    {% endif %}
+                    <div class="join-team">
+                        {% if request.user.profile.team == None and user.is_authenticated %}
+                        <span class="join-team-header">Вступить в команду</span>
+                        <form action="{% url 'join_team' team.id %}" method="post">
+                            {% csrf_token %}
+                            <label for="key">Ключ: </label><span tooltip="Ключ можно получить у капитана" flow=right>🛈</span><br>
+                            <input id="key" type="text" name="key" value="" placeholder="Введите ключ...">
+                            <button type="submit" class="join-button">⮞</button>
+                        </form>
+                        {% endif %}
+                    {% if user.is_authenticated and request.user.profile.team == team and request.user.profile.role.id == 1 %}
+                        <span class="key">Ключ: {{ team.key }}</span>
+                    {% endif %}
+                    {% if user.is_authenticated and request.user.profile.team == team and request.user.profile.role.id == 1 %}
+                        <div class="settings">
+                            <a href="#">
+                                <span>Редактировать</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                    </div>
+                {% if user.is_authenticated and request.user.profile.team == team %}
+                <div class="team-exit" style="margin-bottom: 10px;">
+                    <form action="{% url 'team_exit' team.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" style="outline: none; border: none; background-color: red; color: #fff;">Покинуть команду</button>
+                    </form>
+                </div>
+                {% endif %}
+                </div>
+    
+{% endblock content %}
