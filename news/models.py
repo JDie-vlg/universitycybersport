@@ -3,8 +3,9 @@ from datetime import date
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.urls import reverse
+# from django.template.defaultfilters import slugify
 from slugify import slugify
+from django.urls import reverse
 
 
 class Profile(models.Model):
@@ -19,7 +20,7 @@ class Profile(models.Model):
     university = models.CharField('Университет', max_length=100, null=True, blank=True)
     group = models.CharField('Учебная группа', max_length=50, null=True, blank=True)
     course = models.DecimalField('Курс обучения', max_digits=1, decimal_places=0, null=True, blank=True)
-    birthday = models.DateField('Дата рождения',null=True, blank=True)
+    birthday = models.DateField('Дата рождения', null=True, blank=True)
     team = models.ForeignKey(
         'Team', verbose_name='команда', on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -141,10 +142,12 @@ class Comments(models.Model):
 class Team(models.Model):
     name = models.CharField('Название', max_length=35, unique=True)
     tag = models.CharField('Тег', max_length=16, unique=True)
+    about = models.TextField('О команду', max_length=500, null=True, blank=True)
     logo = models.ImageField('Лого', upload_to="teams_logo/", null=True)
     game = models.ForeignKey(
         Game, verbose_name='игра', on_delete=models.SET_NULL, null=True, blank=True
     )
+    tournament = models.ManyToManyField('Tournaments', verbose_name='Турниры', blank=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
 
     def __str__(self):
@@ -180,8 +183,12 @@ class Tournaments(models.Model):
     author = models.ForeignKey(
         User, verbose_name='пользователь', on_delete=models.CASCADE, blank=True, null=True
     )
+    teams = models.ManyToManyField(
+        Team, verbose_name='Команда', blank=True
+    )
     image = models.ImageField('Лого турнира')
     max_teams = models.PositiveSmallIntegerField('Максимальное количество команд', default=0)
+    count_registration_teams = models.PositiveIntegerField('Количество зарегестрированных команд', default=0)
     start_date = models.DateTimeField("Дата начала")
     start_registration_date = models.DateTimeField("Начало регистрации")
     end_registration_date = models.DateTimeField("Конец регистрации")
@@ -208,6 +215,7 @@ class Tournaments(models.Model):
 
 class TournamentRegistration(models.Model):
     tournaments = models.ForeignKey(Tournaments, on_delete=models.CASCADE)
+    teams = models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(
         User, verbose_name='пользователь', on_delete=models.CASCADE, blank=True, null=True
     )

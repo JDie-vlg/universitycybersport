@@ -5,9 +5,14 @@
 
 {% block content %}
 
-{{ profile.nickname }}
-{{ profile.age }}
-{{ profile.user.email }}
-{{ profile.user.username }}
+    {{ profile.nickname }}
+    {{ profile.age }}
+    {{ profile.user.email }}
+    {{ profile.user.username }}
+    elo: {{ elo }}
+    <img src="{{ profile.avatar.url }}" style="width: 5%;">
+{% if profile.user.id == request.user.id %}
+<a href="{% url 'user_change' profile.nickname %}">Изменить</a><br>
+{% endif %}
 
 {% endblock content %}

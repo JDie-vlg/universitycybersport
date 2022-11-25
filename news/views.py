@@ -5,7 +5,7 @@ from datetime import date
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render, redirect, resolve_url
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.generic.base import View
@@ -13,6 +13,7 @@ from django.views.generic import DetailView, ListView
 from django.db.models import Q
 
 from universitycybersport import REDIRECT_FIELD_NAME
+
 from .models import *
 from .forms import *
 
@@ -97,10 +98,19 @@ class TeamDetailView(DetailView):
     slug_field = "slug"
 
 
-def generate_alphanum_random_string(length):
-    letters_and_digits = string.ascii_letters + string.digits
-    rand_string = ''.join(random.sample(letters_and_digits, length))
-    return str(rand_string)
+# def generate_random_team_key(length):
+#     letter_lower_case = "abcdefghijklmnopqrstuvwxyz"
+#     letter_upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#     number = "0123456789"
+#     user_for = letter_lower_case + letter_upper_case + number
+#     random_key = ''.join(random.sample(user_for, length))
+#     return str(random_key)
+#
+#
+# def generate_alphanum_random_string(length):
+#     letters_and_digits = string.ascii_letters + string.digits
+#     rand_string = ''.join(random.sample(letters_and_digits, length))
+#     return str(rand_string)
 
 
 class CreateTeam(LoginRequiredMixin, View):
@@ -122,7 +132,7 @@ class CreateTeam(LoginRequiredMixin, View):
                 profile.team = team
                 profile.role = role
                 profile.save()
-                return redirect('teams')
+                return redirect(f'/team/{team.slug}/')
         form = CreateTeamForm()
         context = {'form': form,
                    'error_msg': error_msg}
@@ -180,6 +190,39 @@ class TeamExit(View):
                 return redirect(team.get_absolute_url())
 
 
+class TeamDelete(View):
+
+    def post(self, request, pk):
+        if request.method == 'POST':
+            form = DeleteTeamForm(request.POST or None)
+            team = Team.objects.get(id=pk)
+            if form.is_valid():
+                request.user.profile.team = None
+                request.user.profile.role = None
+                request.user.profile.save()
+                team.delete()
+                return redirect('teams')
+
+
+class TeamUpdate(View):
+
+    def get(self, request, slug):
+        get_team = Team.objects.get(slug=slug)
+        team_form = TeamChangeForm(instance=get_team)
+        context = {
+            'team_form': team_form,
+        }
+        return render(request, 'teams/team_change.html', context)
+
+    def post(self, request, slug):
+        print(request.GET)
+
+        get_team = Team.objects.get(slug=slug)
+        if request.method == 'POST':
+            team_form = TeamForm(request.POST, instance=get_team)
+            if team_form.is_valid():
+                team_form.save()
+            return redirect(get_team.get_absolute_url())
 
 
 class TournamentView(ListView):
@@ -223,16 +266,40 @@ class AddTournament(Tournaments, View):
 
 class TournamentsRegistration(LoginRequiredMixin, View):
 
-    def post(self, request, pk):
-        print(f'{request.POST} & {request.GET}')
-        form = TournamentsRegistrationForm(request.POST)
+    def get(self, request, pk):
+        print(f'TYT ----> {request.POST} & {request.GET}<----')
+        form = TournamentsRegistrationForm(request.POST or None)
         tournaments = Tournaments.objects.get(id=pk)
+        context = {'tournaments': tournaments, 'form': form}
+        return render(request, 'tournaments/tournaments_detail.html', context)
+
+    def post(self, request, tournament_id, *args, **kwargs):
+        print(f'TYT ----> {request.POST} & {request.GET}<----')
+        form = TournamentsRegistrationForm(request.POST or None)
+        tournaments = Tournaments.objects.get(id=tournament_id)
         if form.is_valid():
-            form = form.save(commit=False)
-            form.user = request.user
+            print("OK")
+            form.save(commit=False)
             form.tournaments = tournaments
+            # form.teams = request.user.profile.team
+            form.tournaments.teams.add(request.user.profile.team)
+            form.user = request.user
+            form.tournaments.count_registration_teams = tournaments.teams.count()
+            # form.tournaments.teams.filter(tournaments__teams__name=request.user.profile.team.name)
             form.save()
-        return redirect(tournaments.get_absolute_url())
+            request.user.profile.team.tournament.add(tournaments)
+            Tournaments.objects.update(count_registration_teams=form.tournaments.count_registration_teams)
+            print(tournaments.teams.count())
+            print(form.tournaments.teams.filter(tournaments__teams__name=request.user.profile.team.name))
+            print(tournaments.count_registration_teams)
+            return redirect(tournaments.get_absolute_url())
+        else:
+            print('НЕВЕРНАЯ ФОРМА')
+        context = {
+            'form': form,
+        }
+        return render(request, 'tournaments/tournaments_add.html', context)
+        # return redirect(tournaments.get_absolute_url())
 
 
 class UserView(ListView):
@@ -250,6 +317,37 @@ class UserDetailView(DetailView):
     model = Profile
     template_name = 'user/profile_detail.html'
     slug_field = 'nickname'
+
+
+class ProfileUpdate(View):
+
+    def get(self, request, slug):
+        get_user = User.objects.get(id=request.user.id)
+        get_profile = Profile.objects.get(nickname=slug)
+        user_form = UserForm(instance=get_user)
+        profile_form = ProfileForm(instance=get_profile)
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+        }
+        return render(request, 'user/profile_change.html', context)
+
+    def post(self, request, slug):
+        print(request.GET)
+
+        get_user = User.objects.get(id=request.user.id)
+        get_profile = Profile.objects.get(nickname=slug)
+        if request.method == 'POST':
+            user_form = UserForm(request.POST, instance=get_user)
+            profile_form = ProfileForm(request.POST, instance=get_profile)
+            if user_form.is_valid() and profile_form.is_valid():
+                user_form.save()
+                profile_form.save()
+        context = {
+            'user_profile': ProfileForm(instance=get_profile),
+            'user_form': UserForm(instance=get_user),
+        }
+        return redirect(request.user.profile.get_absolute_url())
 
 
 class LoginView(Profile, View):

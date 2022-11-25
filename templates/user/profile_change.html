@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %} {% endblock head %}
+
+{% block content %}
+
+{% if profile_form.nickname.value == request.user.profile.nickname %}
+<form method="post">
+    {% csrf_token %}
+    {{ user_form.as_ul }}
+    {{ profile_form.as_ul }}<br>
+    <button type="submit">Сохранить</button><br>
+</form>
+{% else %}
+У вас нету прав, для изменения данного профиля.
+{% endif %}
+
+{% endblock content %}

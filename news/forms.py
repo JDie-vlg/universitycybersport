@@ -75,11 +75,53 @@ class RegistrationForm(forms.ModelForm):
         fields = ['username', 'first_name', 'last_name', 'password', 'confirm_password', 'phone', 'email']
 
 
+class UserForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=30)
+    email = forms.EmailField()
+
+    def save(self, *args, **kwargs):
+        super(UserForm, self).save(*args, **kwargs)
+        self.instance.first_name = self.cleaned_data.get('first_name')
+        self.instance.last_name = self.cleaned_data.get('last_name')
+        self.instance.email = self.cleaned_data.get('email')
+        self.instance.save()
+
+    class Meta:
+        model = User
+        fields = {
+            'first_name', 'last_name', 'email'
+        }
+
+
+class ProfileForm(forms.ModelForm):
+    nickname = forms.CharField(max_length=30)
+
+    def save(self, *args, **kwargs):
+        self.instance.user.profile.nickname = self.cleaned_data.get('nickname')
+        self.instance.user.profile.save()
+
+    class Meta:
+        model = Profile
+        fields = {
+            'nickname',
+        }
+
+
 class TournamentsRegistrationForm(forms.ModelForm):
+
     class Meta:
         model = TournamentRegistration
-        fields = {'tournaments', 'user'}
+        fields = {'tournaments', 'teams', 'user'}
 
+
+# class TournamentsRegistrationForm(forms.ModelForm):
+#     class Meta:
+#         model = Tournaments
+#         fields = {'name', 'description', 'prize', 'game', 'author', 'teams', 'image', 'max_teams',
+#                   'count_registration_teams', 'start_date', 'start_registration_date', 'end_registration_date',
+#                   'slug', 'status'
+#                   }
 
 class CommentsForm(forms.ModelForm):
     class Meta:
@@ -199,3 +241,45 @@ class ExitTeamForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = {'team'}
+
+
+class DeleteTeamForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = {'team'}
+
+
+class TeamForm(forms.ModelForm):
+    name = forms.CharField(max_length=50)
+    tag = forms.CharField(max_length=16)
+
+    def save(self, *args, **kwargs):
+        super(TeamForm, self).save(*args, **kwargs)
+        self.instance.name = self.cleaned_data.get('name')
+        self.instance.tag = self.cleaned_data.get('tag')
+        self.instance.save()
+
+    class Meta:
+        model = Team
+        fields = {
+            'name', 'tag'
+        }
+
+
+class TeamChangeForm(forms.ModelForm):
+    name = forms.CharField(max_length=50)
+    tag = forms.CharField(max_length=16)
+    about = forms.Textarea()
+
+    def save(self, *args, **kwargs):
+        super(TeamChangeForm, self).save(*args, **kwargs)
+        self.instance.name = self.cleaned_data.get('name')
+        self.instance.tag = self.cleaned_data.get('tag')
+        self.instance.about = self.cleaned_data.get('about')
+        self.instance.save()
+
+    class Meta:
+        model = Team
+        fields = {
+            'about', 'name', 'tag'
+        }

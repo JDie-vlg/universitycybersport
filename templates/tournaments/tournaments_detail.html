@@ -16,6 +16,26 @@
                 <div class="content-tournament">
                     {{ tournaments.description }}
                 </div>
+                <div>
+                    <div class="tournament-information">
+                        1
+                    </div>
+                    <div class="registered_teams">
+                        <div class="registered_teams">
+                            {{ tournaments.count_registration_teams }} / {{ tournaments.max_teams }}<br>
+                        </div>
+                        <div class="tournament-registration">
+                            <form action="{% url 'tournament_registration' tournaments.id %}" method="post">
+                                {% csrf_token %}
+                                {{ form.as_table }}
+                                <button type="submit">Зарегестрироваться</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
     </div>
-
+{{ tournaments.teams.all }}<br>
+    {% for tour in tournaments.teams.all %}
+        {{ tour }}
+    {% endfor %}
 {% endblock content %}

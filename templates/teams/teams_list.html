@@ -10,7 +10,7 @@
                         <span class="header-teams-text">Команды</span>
                     {% if user.is_authenticated %}
                     {% if request.user.profile.team != None %}
-                    <span style="float: right;">Ваша команда: <a href="{% url 'team_detail' request.user.profile.team.name %}">{{ request.user.profile.team.name }}</a></span>
+                    <span style="float: right;">Ваша команда: <a href="{% url 'team_detail' request.user.profile.team.slug %}">{{ request.user.profile.team.name }}</a></span>
                     {% else %}
                     <form action="{% url 'team_create' %}" method="post">
                         {% csrf_token %}

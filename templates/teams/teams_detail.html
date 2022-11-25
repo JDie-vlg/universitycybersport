@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} Главная {% endblock title %}
-{% block head %} <link rel="stylesheet" href="{% static 'css/teams-detail.css' %}"> {% endblock head %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/teams-detail.css' %}">
+{% endblock head %}
 
 {% block content %}
     
@@ -52,13 +54,17 @@
                         </form>
                         {% endif %}
                     {% if user.is_authenticated and request.user.profile.team == team and request.user.profile.role.id == 1 %}
-                        <span class="key">Ключ: {{ team.key }}</span>
+                        <span>Ключ:</span><span id="key" class="key" style="display:none;"> {{ team.key }} </span><span><img id="eye_show" onclick="show()" src="{% static 'image/eye.svg' %}" alt="eye" style="width: 12px;"> <img id="eye_hide" onclick="hide()" src="{% static 'image/eye.svg' %}" alt="eye" style="width: 12px; display:none;"></span>
                     {% endif %}
                     {% if user.is_authenticated and request.user.profile.team == team and request.user.profile.role.id == 1 %}
                         <div class="settings">
-                            <a href="#">
+                            <a href="{% url 'team_change' team.slug %}">
                                 <span>Редактировать</span>
                             </a>
+                            <form action="{% url 'team_delete' team.id %}" method="post">
+                            {% csrf_token %}
+                                <button type="submit" style="outline: none; border: none; background-color: red; color: #fff;">Удалить команду</button>
+                            </form>
                         </div>
                     {% endif %}
                     </div>
@@ -70,6 +76,18 @@
                     </form>
                 </div>
                 {% endif %}
+                {{ team.tournament.all }}
                 </div>
-    
+                <script>
+                    function show() {
+                        document.getElementById("key").setAttribute("style", "transition: 1s;");
+                        document.getElementById("eye_show").setAttribute("style", "display: none");
+                        document.getElementById("eye_hide").setAttribute("style", "display: block; width: 12px;");
+                    }
+                    function hide() {
+                        document.getElementById("key").setAttribute("style", "display: none");
+                        document.getElementById("eye_hide").setAttribute("style", "display: none");
+                        document.getElementById("eye_show").setAttribute("style", "display: block; width: 12px;");
+                    }
+                </script>
 {% endblock content %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Главная {% endblock title %}
+{% block head %}  {% endblock head %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ team_form.as_ul }}
+    <button type="submit">Сохранить</button><br>
+</form>
+
+{% endblock content %}
