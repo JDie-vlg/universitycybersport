@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="{% url 'server_add' %}" method="post">
+        {% csrf_token %}
+        <button>Добавить сервер</button>
+    </form>
+    {% for server in server_list %}
+        <a href="{{ server.get_absolute_url }}">{{ server.host }}</a>
+    {% endfor %}
+</body>
+</html>

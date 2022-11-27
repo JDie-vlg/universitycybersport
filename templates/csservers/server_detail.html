@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+
+    <script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.min.js"></script>
+    <link href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css" rel="stylesheet"/>
+</head>
+<body>
+
+    {{ server.host }}
+    {{ server.port }}
+    {{ server.server_username }}
+    {{ server.secret }}
+    {{ server.slug }}
+
+    <form action="{% url 'server_start' server.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <button type="submit" style="outline: none; border: none; background-color: red; color: #fff;">Запустить сервер</button>
+    </form>
+{#    <form action="{% url 'server_stop' server.id %}" method="post" enctype="multipart/form-data">#}
+{#        {% csrf_token %}#}
+{#        <button type="submit" style="outline: none; border: none; background-color: red; color: #fff;">Выключить сервер</button>#}
+{#    </form>#}
+
+
+
+    <form action="{% url 'server_stop' server.id %}" method="post" enctype="multipart/form-data">
+        <p>{% csrf_token %}</p>
+        <button type="submit" style="outline: none; border: none; background-color: red; color: #fff;">Выключить сервер</button>
+    </form>
+
+
+
+    <form>
+        <p id='access_token'>{% csrf_token %}</p>
+{#        <input id='access_token' type='hidden' name='access_token' value='{% csrf_token %}'>#}
+        <button id="TestedBtn" value="val_1" name="TestedBtn">Tested</button><br>
+{#        <textarea id="testId">{% csrf_token %}</textarea>#}
+    </form>
+
+
+{#    <form>#}
+{#        <button id="tokenBtn">Token</button>#}
+{#    </form>#}
+
+
+{#    <button class="test" id="test" name="test" onclick="MyFunction()" type="button">Test</button><br>#}
+    <p></p>
+
+    <script>
+        let dirty_html_token = document.getElementsByName('csrfmiddlewaretoken')[0];
+        console.log(`dirty: ${dirty_html_token}`);
+        let test = dirty_html_token.getElementsByTagName("input");
+        console.log(`test: ${test}`);
+        let html_token = dirty_html_token.innerHTML;
+        console.log(`html: ${html_token}`);
+        {#let token = html_token.val();#}
+        {#console.log(`token: ${token}`);#}
+        var newDoc = new DOMParser().parseFromString(test, "text/html").getElementsByTagName("p")[0]
+        console.log(`TEST: ${newDoc.value}`)
+
+
+        $("#tokenBtn").click(function () {
+            alert(newDoc.value);
+        }
+        )
+    </script>
+
+    <script>
+        $("#TestedBtn").click(function(e){
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/server_stop/{{ server.id }}",
+                data: {
+                    id: {{ server.id }},
+                    access_token: newDoc.value,
+                },
+                success: function(result) {
+                    alert('ok');
+                },
+                error: function(result) {
+                    alert('error');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
