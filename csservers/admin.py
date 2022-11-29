@@ -9,6 +9,7 @@ from .models import *
 
 @admin.register(Server)
 class ServerAdmin(admin.ModelAdmin):
-    list_display = ('id', 'host', 'port', 'slug')
+    list_display = ('id', 'host', 'ssh_port', 'server_port', 'slug')
     list_display_links = ('id', 'host')
     search_fields = ['host', ]
+    prepopulated_fields = {'slug': ('host', 'server_port')}

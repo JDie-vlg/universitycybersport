@@ -10,7 +10,7 @@ class AddServerForm(forms.ModelForm):
     class Meta:
         model = Server
         fields = [
-            'user', 'host', 'server_username', 'secret', 'port'
+            'user', 'host', 'server_username', 'secret', 'ssh_port', "server_port"
         ]
         widgets = {
             'host': TextInput(attrs={
@@ -25,7 +25,8 @@ class AddServerForm(forms.ModelForm):
                 'class': 'commentId',
                 'placeholder': 'password',
             }),
-            'port': NumberInput(),
+            'ssh_port': NumberInput(),
+            'server_port': NumberInput(),
         }
 
 
@@ -33,7 +34,7 @@ class StartServerForm(forms.ModelForm):
     class Meta:
         model = Server
         fields = [
-            'host', 'server_username', 'secret', 'port'
+            'host', 'server_username', 'secret', 'ssh_port', "server_port"
         ]
         widgets = {
             'host': TextInput(attrs={
@@ -48,5 +49,6 @@ class StartServerForm(forms.ModelForm):
                 'class': 'commentId',
                 'placeholder': 'password',
             }),
-            'port': IntegerField(),
+            'ssh_port': NumberInput(),
+            'server_port': NumberInput(),
         }

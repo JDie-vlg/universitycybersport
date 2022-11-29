@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView
 from django.views.generic.base import View
-
+import valve.source
+import valve.source.a2s
+import re
 import paramiko
 
 # Create your views here.
@@ -108,7 +110,7 @@ class StartServer(Server, View):
     #             new_from.host = server.host
     #             new_from.server_username = server.server_username
     #             new_from.secret = server.secret
-    #             new_from.port = server.port
+    #             new_from.port = server.ssh_port
     #             new_from.save()
     #             client = paramiko.SSHClient()
     #             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -127,7 +129,7 @@ class StartServer(Server, View):
             client = paramiko.SSHClient()
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             client.connect(hostname=server.host, username=server.server_username, password=server.secret,
-                           port=server.port)
+                           port=server.ssh_port)
             stdin, stdout, stderr = client.exec_command('./csgoserver st')
             data = stdout.read() + stderr.read()
             client.close()
@@ -151,7 +153,7 @@ class StopServer(Server, View):
             client = paramiko.SSHClient()
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             client.connect(hostname=server.host, username=server.server_username, password=server.secret,
-                           port=server.port)
+                           port=server.ssh_port)
             stdin, stdout, stderr = client.exec_command('./csgoserver sp')
             data = stdout.read() + stderr.read()
             client.close()
@@ -184,3 +186,47 @@ class StopServer(Server, View):
 #
 #     def post(self, request, *args, **kwargs):
 #         pass
+
+class TakeMap(Server, View):
+
+    def get(self, request, *args, **kwargs):
+        form = AddServerForm(request.POST or None)
+        servers = Server.objects.all()
+        context = {'form': form, 'csservers': servers}
+        return render(request, 'csservers/server_detail.html', context)
+
+    def post(self, request, pk):
+        print(f'POST: {request.POST}')
+        print(f'GET: {request.GET}')
+        server = Server.objects.get(id=pk)
+        requested_html = re.search(r'^text/html', request.META.get('HTTP_ACCEPT'))
+        if not requested_html:
+            server_address = (server.host, server.server_port)
+            try:
+                with valve.source.a2s.ServerQuerier(server_address) as cs_server:
+                    info = cs_server.info()
+                    players = cs_server.players()
+
+                    cs_server_name = "{server_name}".format(**info)
+                    max_players = "{max_players}".format(**info)
+                    players_on_server = "{player_count}".format(**info)
+                    server_map = "{map}".format(**info)
+
+
+                    print("{player_count}/{max_players} {server_name}".format(**info))
+                    for player in sorted(players["players"],
+                                         key=lambda p: p["score"], reverse=True):
+                        print("{score} {name}".format(**player))
+
+                    Server.objects.update(server_name=cs_server_name)
+                    Server.objects.update(player_count=players_on_server)
+                    Server.objects.update(max_players=max_players)
+                    Server.objects.update(map=server_map)
+                    return redirect(server.get_absolute_url())
+
+            except valve.source.NoResponseError:
+                print("Server {}:{} timed out!".format(*server_address))
+        else:
+            print("-------------YA EBAL-------------")
+            return redirect(server.get_absolute_url())
+        return redirect(server.get_absolute_url())

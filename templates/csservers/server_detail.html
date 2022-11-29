@@ -1,8 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{ server.server_name }}</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
 
@@ -11,16 +12,26 @@
 </head>
 <body>
 
-    {{ server.host }}
-    {{ server.port }}
-    {{ server.server_username }}
-    {{ server.secret }}
-    {{ server.slug }}
+    Server name: {{ server.server_name }}<br>
+    Map: {{ server.map }}<br>
+    Players count: {{ server.player_count }}<br>
+    Max players: {{ server.max_players }}<br>
+    Host: {{ server.host }}<br>
+    SSH Port: {{ server.ssh_port }}<br>
+    Server Port: {{ server.server_port }}<br>
+    User name: {{ server.server_username }}<br>
+    Password: {{ server.secret }}<br>
+    Slug: {{ server.slug }}<br>
 
-    <form action="{% url 'server_start' server.id %}" method="post" enctype="multipart/form-data">
+    <p id="server-state" class="server-state">Сервер остановлен</p>
+
+    <form>
         {% csrf_token %}
-        <button type="submit" style="outline: none; border: none; background-color: red; color: #fff;">Запустить сервер</button>
+        <button id="StartedServer" style="outline: none; border: none; background-color: red; color: #fff;">Запустить сервер</button>
+        <button id="StoppedServer" style="outline: none; border: none; background-color: red; color: #fff;">Выключить сервер</button>
+        <button id="TakeMap">Tested</button><br>
     </form>
+
 {#    <form action="{% url 'server_stop' server.id %}" method="post" enctype="multipart/form-data">#}
 {#        {% csrf_token %}#}
 {#        <button type="submit" style="outline: none; border: none; background-color: red; color: #fff;">Выключить сервер</button>#}
@@ -28,19 +39,17 @@
 
 
 
-    <form action="{% url 'server_stop' server.id %}" method="post" enctype="multipart/form-data">
-        <p>{% csrf_token %}</p>
-        <button type="submit" style="outline: none; border: none; background-color: red; color: #fff;">Выключить сервер</button>
-    </form>
+{#    <form>#}
+{#        {% csrf_token %}#}
+{#        <button id="StoppedServer" style="outline: none; border: none; background-color: red; color: #fff;">Выключить сервер</button>#}
+{#    </form>#}
 
-
-
-    <form>
-        <p id='access_token'>{% csrf_token %}</p>
+{#    <form>#}
+{#        {% csrf_token %}#}
 {#        <input id='access_token' type='hidden' name='access_token' value='{% csrf_token %}'>#}
-        <button id="TestedBtn" value="val_1" name="TestedBtn">Tested</button><br>
+{#        <button id="TestedBtn" value="val_1" name="TestedBtn">Tested</button><br>#}
 {#        <textarea id="testId">{% csrf_token %}</textarea>#}
-    </form>
+{#    </form>#}
 
 
 {#    <form>#}
@@ -49,45 +58,75 @@
 
 
 {#    <button class="test" id="test" name="test" onclick="MyFunction()" type="button">Test</button><br>#}
-    <p></p>
+
+
+
+{#    <script>#}
+{#        let server_state = 'Сервер остановлен';#}
+{#        $("#server-state").text(server_state);#}
+{#    </script>#}
+
+    <script src={% static "js/server.js" %}></script>
 
     <script>
-        let dirty_html_token = document.getElementsByName('csrfmiddlewaretoken')[0];
-        console.log(`dirty: ${dirty_html_token}`);
-        let test = dirty_html_token.getElementsByTagName("input");
-        console.log(`test: ${test}`);
-        let html_token = dirty_html_token.innerHTML;
-        console.log(`html: ${html_token}`);
-        {#let token = html_token.val();#}
-        {#console.log(`token: ${token}`);#}
-        var newDoc = new DOMParser().parseFromString(test, "text/html").getElementsByTagName("p")[0]
-        console.log(`TEST: ${newDoc.value}`)
-
-
-        $("#tokenBtn").click(function () {
-            alert(newDoc.value);
-        }
-        )
-    </script>
-
-    <script>
-        $("#TestedBtn").click(function(e){
+        $("#StoppedServer").click(function (e) {
             e.preventDefault();
             $.ajax({
                 type: "POST",
-                url: "/server_stop/{{ server.id }}",
+                url: "/server_stop/{{ server.id }}/",
                 data: {
                     id: {{ server.id }},
-                    access_token: newDoc.value,
+                    access_token: csrftoken
                 },
-                success: function(result) {
-                    alert('ok');
-                },
-                error: function(result) {
-                    alert('error');
+                success: function(data) {
+                    server_state = 'Сервер остановлен';
+                    $("#server-state").text(server_state);
+                    alert('Сервер остановлен!');
+                    },
+                error: function(data) {
+                    alert('Ошибка при выключении сервера!');
                 }
             });
         });
+    </script>
+
+    <script>
+        $("#StartedServer").click(function(e){
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/server_start/{{ server.id }}/",
+                data: {
+                    id: {{ server.id }},
+                    access_token: csrftoken,
+                },
+                success: function(data) {
+                    server_state = 'Сервер запущен';
+                    $("#server-state").text(server_state);
+                    alert('Сервер запущен!');
+                },
+                error: function(data) {
+                    alert('Ошибка при запуске сервера!');
+                }
+            });
+        });
+    </script>
+
+    <script>
+
+            $.ajax({
+                type: "POST",
+                url: "/take_map/{{ server.id }}/",
+                data: {
+                    id: {{ server.id }},
+                    access_token: csrftoken,
+                },
+                success: function(data) {
+                },
+                error: function(data) {
+                }
+            });
+
     </script>
 
 </body>
